@@ -15,7 +15,12 @@ const Feedback = ({incrementers}) => {
 }
 
 const Statistic = ({name, value}) => {
-  return <p>{name}: {value}</p>
+  return (
+  <tr>
+    <td>{name}:</td>
+    <td>{value}</td>
+  </tr>
+  )
 }
 
 const Statistics = ({counters}) => {
@@ -36,12 +41,16 @@ const Statistics = ({counters}) => {
   return (
     <div>
       <h2>statistiikka</h2>
-      <Statistic name="hyvä" value={counters[0]}/>
-      <Statistic name="neutraali" value={counters[1]}/>
-      <Statistic name="huono" value={counters[2]}/>
-      <Statistic name="yhteensä" value={total}/>
-      <Statistic name="keskiarvo" value={average}/>
-      <Statistic name="positiivisia" value={positiveRatio}/>
+      <table>
+        <tbody>
+          <Statistic name="hyvä" value={counters[0]}/>
+          <Statistic name="neutraali" value={counters[1]}/>
+          <Statistic name="huono" value={counters[2]}/>
+          <Statistic name="yhteensä" value={total}/>
+          <Statistic name="keskiarvo" value={average}/>
+          <Statistic name="positiivisia" value={positiveRatio}/>
+        </tbody>
+      </table>
     </div>
   )
 }
