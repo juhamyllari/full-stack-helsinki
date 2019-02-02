@@ -10,6 +10,39 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ nameFilter, setNameFilter ] = useState('')
+
+  return (
+    <div>
+      <h1>Puhelinluettelo</h1>
+
+      <h2>Hakurajaus</h2>
+      <Filter nameFilter={nameFilter} setNameFilter={setNameFilter} />
+
+      <h2>Lisää uusi</h2>
+      <PersonForm newName={newName} setNewName={setNewName}
+                  newNumber={newNumber} setNewNumber={setNewNumber}
+                  persons={persons} setPersons={setPersons} />
+
+      <h2>Numerot</h2>
+      <PersonDisplay persons={persons} nameFilter={nameFilter}/>
+    </div>
+  )
+}
+
+const PersonDisplay = ({persons, nameFilter}) => persons
+        .filter(p => p.name.toLowerCase().includes(nameFilter))
+        .map(person => <p key={person.name}>{person.name} {person.number}</p>)
+
+const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setPersons}) => {
+
+  const handleNameChange = (event) => {
+    setNewName(event.target.value)
+  }
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
+  }
+
   const addName = (event) => {
     event.preventDefault()
     const personObject = {
@@ -24,24 +57,10 @@ const App = () => {
       setNewNumber('')
     }
   }
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
-  const handleFilterChange = (event) => {
-    setNameFilter(event.target.value)
-  }
-
+  
   return (
     <div>
-      <h1>Puhelinluettelo</h1>
-      <div>
-        rajaa näytettäviä: <input value={nameFilter} onChange={handleFilterChange} />
-      </div>
       <form onSubmit={addName}>
-        <h2>Lisää uusi</h2>
         <div>
           nimi: <input value={newName} onChange={handleNameChange}/>
         </div>
@@ -52,13 +71,19 @@ const App = () => {
           <button type="submit">lisää</button>
         </div>
       </form>
-      <h2>Numerot</h2>
-      {persons
-        .filter(p => p.name.toLowerCase().includes(nameFilter))
-        .map(person => <p key={person.name}>{person.name} {person.number}</p>)}
     </div>
   )
+}
 
+const Filter = ({nameFilter, setNameFilter}) => {
+  const handleFilterChange = (event) => {
+    setNameFilter(event.target.value)
+  }
+  return (
+    <div>
+      rajaa näytettäviä: <input value={nameFilter} onChange={handleFilterChange} />
+    </div>
+  )
 }
 
 export default App
