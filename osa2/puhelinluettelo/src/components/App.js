@@ -1,15 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const App = () => {
-  const [ persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '045-1234567' },
-    { name: 'Martti Tienari', number: '040-123456' },
-    { name: 'Arto Järvinen', number: '040-123456' },
-    { name: 'Lea Kutvonen', number: '040-123456' }
-  ])
+  const [ persons, setPersons] = useState([])
+  //   { name: 'Arto Hellas', number: '045-1234567' },
+  //   { name: 'Martti Tienari', number: '040-123456' },
+  //   { name: 'Arto Järvinen', number: '040-123456' },
+  //   { name: 'Lea Kutvonen', number: '040-123456' }
+  // ])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ nameFilter, setNameFilter ] = useState('')
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   return (
     <div>
@@ -57,7 +66,7 @@ const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setP
       setNewNumber('')
     }
   }
-  
+
   return (
     <div>
       <form onSubmit={addName}>
