@@ -70,8 +70,30 @@ const CountryInformation = ({country}) => {
       {country.languages.map(lan => <li key={lan.name}>{lan.name}</li>)}
       </ul>
       <img src={country.flag} alt={`Flag of ${country.name}`} width="150" />
+      <CapitalWeather capital={country.capital} />
     </div>
   )
+}
+
+const CapitalWeather = ({capital}) => {
+  const callHead = 'http://api.apixu.com/v1/current.json?key='
+  const callTail = `&q=${capital}`
+  const [weather, setWeather] = useState({})
+  useEffect(() => {
+    axios
+      .get(`${callHead}${process.env.REACT_APP_APIXU_KEY}${callTail}`)
+      .then((result) => {setWeather(result.data)})
+    }, [])
+  if (Object.keys(weather).length === 0) {
+    return null
+  } else {
+    return (
+    <div>
+      <h3>Weather in {weather.location.name}</h3>
+      <p>Temperature: {weather.current.temp_c} °C</p>
+      <img src={weather.current.condition.icon} alt={weather.current.condition.text} width="50" />
+    </div>)
+  }
 }
 
 export default App;
