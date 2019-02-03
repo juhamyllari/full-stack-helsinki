@@ -15,7 +15,6 @@ const App = () => {
   }, [])
   return (
     <>
-      <p>Found {countries.length} countries before filtering.</p>
       <FilterBox filter={filter} setFilter={setFilter}/>
       <CountryListDisplay countries={countries} filter={filter} setFilter={setFilter}/>
     </>
@@ -41,8 +40,6 @@ const CountryListDisplay = ({countries, filter, setFilter}) => {
                           .toLowerCase()
                           .includes(filter.toLowerCase()))
   const size = countriesToShow.length
-  // console.log(`filter is |${filter}|`)
-  // console.log(`size is ${size}`)
   if (size > limit) {
     return filter === '' ? '' : <p>Too many countries match. Please use another filter.</p>
   } else if (size > 1) {
@@ -76,6 +73,9 @@ const CountryInformation = ({country}) => {
 }
 
 const CapitalWeather = ({capital}) => {
+  if (process.env.REACT_APP_APIXU_KEY === undefined) {
+    return <p>Place a valid Apixu key in .env to fetch weather data.</p>
+  }
   const callHead = 'http://api.apixu.com/v1/current.json?key='
   const callTail = `&q=${capital}`
   const [weather, setWeather] = useState({})
