@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from '../services/persons'
 
 const App = () => {
   const [ persons, setPersons] = useState([])
-  //   { name: 'Arto Hellas', number: '045-1234567' },
-  //   { name: 'Martti Tienari', number: '040-123456' },
-  //   { name: 'Arto Järvinen', number: '040-123456' },
-  //   { name: 'Lea Kutvonen', number: '040-123456' }
-  // ])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ nameFilter, setNameFilter ] = useState('')
-
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
-  }, [])
-
+    personService
+      .getAll()
+      .then(response => setPersons(response.data))
+    }, [])
   return (
     <div>
       <h1>Puhelinluettelo</h1>
@@ -33,40 +24,62 @@ const App = () => {
                   persons={persons} setPersons={setPersons} />
 
       <h2>Numerot</h2>
-      <PersonDisplay persons={persons} nameFilter={nameFilter}/>
+      <PersonDisplay persons={persons} setPersons={setPersons} nameFilter={nameFilter}/>
     </div>
   )
 }
 
-const PersonDisplay = ({persons, nameFilter}) => persons
-        .filter(p => p.name.toLowerCase().includes(nameFilter))
-        .map(person => <p key={person.name}>{person.name} {person.number}</p>)
+const PersonDisplay = ({persons, setPersons, nameFilter}) => {
+  const deletePerson = (person) => {
+    if (window.confirm(`Haluatko poistaa henkilön ${person.name}?`)) {
+      personService.del(person.id)
+      setPersons(persons.filter(p => p.id !== person.id))
+    }
+  }
+  return persons
+        .filter(person => person.name.toLowerCase().includes(nameFilter))
+        .map(person =>
+          <div key={person.id}>
+            {person.name} {person.number}
+            <button onClick={() => deletePerson(person)}>Poista</button>
+          </div>)}
 
 const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setPersons}) => {
-
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
-
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
-
   const addName = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName,
       number: newNumber
     }
-    if (persons.some(p => p.name === newName)) {
+    if (persons.some(p => p.name === newName && p.number === newNumber)) {
       window.alert(`${newName} on jo luettelossa.`)
+    } else if (persons.some(p => p.name === newName)) {
+      if (window.confirm(`${newName} on jo luettelossa. Korvataanko vanha numero uudella?`)) {
+        const person = persons.find(p => p.name === newName)
+        const updatedPerson = {...person, number: newNumber}
+        personService
+          .update(person.id, updatedPerson)
+          .then((response) => {
+            setPersons(persons.map(p => p.id === person.id ? updatedPerson : p))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
     } else {
-      setPersons(persons.concat(personObject))
+      personService.create(personObject)
+        .then((response) => {
+          setPersons(persons.concat(response.data))
+        })
       setNewName('')
       setNewNumber('')
     }
   }
-
   return (
     <div>
       <form onSubmit={addName}>
