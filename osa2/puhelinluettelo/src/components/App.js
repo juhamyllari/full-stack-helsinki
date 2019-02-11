@@ -113,6 +113,9 @@ const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setP
           setNewNumber('')
           displayMessage(`Henkilö ${response.data.name} lisätty.`, 3000, true)
         })
+        .catch(error => {
+          displayMessage(error.response.data.error, 5000, false)
+        })
     }
   }
   return (
