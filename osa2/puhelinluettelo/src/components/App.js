@@ -9,12 +9,12 @@ const App = () => {
   const [ message, setMessage ] = useState(null)
   const [ success, setSuccess ] = useState(true)
 
-  const displayMessage = (msg, duration, successful) => {
+  const displayMessage = (msg, successful) => {
     setSuccess(successful)
     setMessage(msg, success)
     setTimeout(() => {
       setMessage(null)
-    }, duration)
+    }, 5000)
   }
 
   useEffect(() => {
@@ -54,11 +54,11 @@ const PersonDisplay = ({persons, setPersons, nameFilter, setMessage, displayMess
       .del(person.id)
       .then((response) => {
         setPersons(persons.filter(p => p.id !== person.id))
-        displayMessage(`Henkilö ${person.name} poistettu.`, 3000, true)
+        displayMessage(`Henkilö ${person.name} poistettu.`, true)
       })
       .catch(error => {
         setPersons(persons.filter(p => p.id !== person.id))
-        displayMessage(`Henkilö ${person.name} oli jo poistettu.`, 3000, false)
+        displayMessage(`Henkilö ${person.name} oli jo poistettu.`, false)
       })
     }
   }
@@ -87,7 +87,7 @@ const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setP
       number: newNumber
     }
     if (persons.some(p => p.name === newName && p.number === newNumber)) {
-      displayMessage(`${newName} on jo luettelossa.`, 3000, false)
+      displayMessage(`${newName} on jo luettelossa.`, false)
     } else if (persons.some(p => p.name === newName)) {
       if (window.confirm(`${newName} on jo luettelossa. Korvataanko vanha numero uudella?`)) {
         const person = persons.find(p => p.name === newName)
@@ -98,11 +98,11 @@ const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setP
             setPersons(persons.map(p => p.id === person.id ? updatedPerson : p))
             setNewName('')
             setNewNumber('')
-            displayMessage(`Henkilön ${person.name} numero muutettu.`, 3000, true)
+            displayMessage(`Henkilön ${person.name} numero muutettu.`, true)
           })
           .catch(error => {
             setPersons(persons.filter(p => p.id !== person.id))
-            displayMessage(`Henkilö ${person.name} oli jo poistettu.`, 3000, false)
+            displayMessage(`Henkilö ${person.name} oli jo poistettu.`, false)
           })
       }
     } else {
@@ -111,10 +111,10 @@ const PersonForm = ({newName, setNewName, newNumber, setNewNumber, persons, setP
           setPersons(persons.concat(response.data))
           setNewName('')
           setNewNumber('')
-          displayMessage(`Henkilö ${response.data.name} lisätty.`, 3000, true)
+          displayMessage(`Henkilö ${response.data.name} lisätty.`, true)
         })
         .catch(error => {
-          displayMessage(error.response.data.error, 5000, false)
+          displayMessage(error.response.data.error, false)
         })
     }
   }
