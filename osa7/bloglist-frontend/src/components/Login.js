@@ -26,10 +26,10 @@ const Login = (props) => {
       <Form onSubmit={handleLogin}>
         <Form.Group>
           <Form.Label>username</Form.Label>
-          <Form.Control type="text" name="username" />
+          <Form.Control id="username" type="text" name="username" />
           <Form.Label>password</Form.Label>
-          <Form.Control type="text" name="password" />
-          <Button type="submit">kirjaudu</Button>
+          <Form.Control id="password" type="text" name="password" />
+          <Button id="login" type="submit">kirjaudu</Button>
         </Form.Group>
       </Form>
     </div>
